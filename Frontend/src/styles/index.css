@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  background: #F7F4EF;
+  color: #242124;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  margin: 0;
+}
+
+::selection { background: rgba(122,21,40,0.12); color: #242124; }
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(201,197,192,0.6); border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #7A1528; }
+
+button, textarea, input { font-family: inherit; }
+textarea:focus, input:focus { outline: none; }
+button { cursor: pointer; }
+
+/* Patient row hover */
+.patient-row { transition: background 0.14s ease, box-shadow 0.14s ease; }
+.patient-row:hover { background: #FFFFFF !important; box-shadow: 0 2px 16px rgba(36,33,36,0.07) !important; }
+.patient-row:hover .row-arrow { opacity: 1 !important; }
+.patient-row:hover .row-avatar { background: #EDE3D5 !important; color: #7A1528 !important; }
+
+/* File row hover */
+.file-row { transition: background 0.14s ease; }
+.file-row:hover { background: #F7F4EF !important; }
+.file-row:hover .file-icon-box { background: #EDE3D5 !important; color: #7A1528 !important; }
+.file-row:hover .file-view-btn { background: #7A1528 !important; color: #fff !important; border-color: #7A1528 !important; }
