@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { authService } from "../services/api";
 
 const C = {
   wine: "#7A1528",
@@ -49,7 +50,7 @@ export default function SignupPage({ onSuccess, onLogin }) {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setErr("");
     if (!name || !email || !password) {
@@ -65,10 +66,24 @@ export default function SignupPage({ onSuccess, onLogin }) {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const formattedName = name.startsWith("Dr.") ? name : "Dr. " + name;
+      const res = await authService.register({
+        name: formattedName.trim(),
+        email: email.trim(),
+        password,
+        specialty: specialty.trim() || "General Physician",
+      });
+      if (res.success && res.doctor) {
+        onSuccess(res.doctor);
+      } else {
+        setErr(res.message || "Registration failed.");
+      }
+    } catch (error) {
+      setErr(error.message || "Failed to connect to server. Please check your backend.");
+    } finally {
       setLoading(false);
-      onSuccess();
-    }, 800);
+    }
   }
 
   return (

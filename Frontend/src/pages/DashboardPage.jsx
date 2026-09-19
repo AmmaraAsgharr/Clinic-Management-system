@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { patients, visits } from "../data/store";
+import { useState, useEffect } from "react";
+import { patientService } from "../services/api";
 import AppHeader from "../components/common/AppHeader";
 
 const C = {
@@ -19,18 +19,40 @@ function GoldRule() {
   return <div style={{ height: 1, background: `linear-gradient(90deg,${C.gold},rgba(183,154,99,0.12))` }} />;
 }
 
-export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout }) {
+export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout, doctor }) {
   const [search, setSearch] = useState("");
   const [hovered, setHovered] = useState(null);
+  const [patients, setPatients] = useState([]);
+  const [stats, setStats] = useState({ totalPatients: 0, totalVisits: 0, followUps: 0 });
+  const [loading, setLoading] = useState(true);
 
-  const filtered = patients.filter((p) => {
-    const q = search.toLowerCase();
-    return !q || p.name.toLowerCase().includes(q) || p.id.toLowerCase().includes(q) || p.phone.includes(q);
-  });
+  async function loadData(query = "") {
+    try {
+      const [statsRes, patientsRes] = await Promise.all([
+        patientService.getStats().catch(() => ({ stats: { totalPatients: 0, totalVisits: 0, followUps: 0 } })),
+        patientService.getPatients({ search: query }).catch(() => ({ patients: [] })),
+      ]);
+
+      if (statsRes?.stats) {
+        setStats(statsRes.stats);
+      }
+      if (patientsRes?.patients) {
+        setPatients(patientsRes.patients);
+      }
+    } catch (err) {
+      console.error("Failed to load dashboard data:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadData(search);
+  }, [search]);
 
   return (
     <div style={{ minHeight: "100vh", background: C.ivory, display: "flex", flexDirection: "column", fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
-      <AppHeader onLogout={onLogout} />
+      <AppHeader onLogout={onLogout} doctor={doctor} />
 
       <main style={{ flex: 1, maxWidth: 1360, width: "100%", margin: "0 auto", padding: "52px 44px 100px" }}>
         {/* ── Top Hero: Greeting (Left) + Stats Cards (Right) ── */}
@@ -41,10 +63,10 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout })
               Saturday · 12 September 2026
             </p>
             <h1 style={{ fontFamily: SERIF, fontSize: 36, fontWeight: 400, color: C.charcoal, margin: 0, lineHeight: 1.15, letterSpacing: "-0.02em", fontStyle: "italic" }}>
-              Good morning, <span style={{ color: C.wine }}>Dr. Ahmed.</span>
+              Good morning, <span style={{ color: C.wine }}>{doctor?.name || "Doctor"}.</span>
             </h1>
             <p style={{ marginTop: 8, fontSize: 13.5, color: C.muted, lineHeight: 1.5 }}>
-              You have <strong style={{ color: C.charcoal }}>{patients.length}</strong> patients registered in your practice.
+              You have <strong style={{ color: C.charcoal }}>{stats.totalPatients}</strong> patients registered in your practice.
             </p>
           </div>
 
@@ -74,7 +96,7 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout })
               </div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 10 }}>
                 <span style={{ fontFamily: SERIF, fontSize: 38, color: C.white, lineHeight: 1, fontStyle: "italic" }}>
-                  {patients.length}
+                  {stats.totalPatients}
                 </span>
                 <span style={{ fontSize: 11.5, color: "rgba(255,255,255,0.55)" }}>registered</span>
               </div>
@@ -103,9 +125,9 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout })
               </div>
               <div style={{ display: "flex", alignItems: "baseline", gap: 8, marginTop: 10 }}>
                 <span style={{ fontFamily: SERIF, fontSize: 38, color: C.wine, lineHeight: 1, fontStyle: "italic" }}>
-                  {visits.length}
+                  {stats.totalVisits}
                 </span>
-                <span style={{ fontSize: 11.5, color: C.muted }}>across {patients.length} patients</span>
+                <span style={{ fontSize: 11.5, color: C.muted }}>across {stats.totalPatients} patients</span>
               </div>
             </div>
           </div>
@@ -172,7 +194,7 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout })
         <div>
           <div style={{ display: "flex", alignItems: "baseline", gap: 12, marginBottom: 18 }}>
             <h2 style={{ fontSize: 20, fontWeight: 700, color: C.charcoal, letterSpacing: "-0.02em", margin: 0 }}>Patients</h2>
-            <span style={{ fontSize: 13, color: C.muted }}>{filtered.length} records</span>
+            <span style={{ fontSize: 13, color: C.muted }}>{patients.length} records</span>
             <div style={{ flex: 1, height: 1, background: C.border }} />
             <span style={{ fontSize: 11.5, color: C.muted, fontStyle: "italic" }}>Click to open clinical profile</span>
           </div>
@@ -188,19 +210,21 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout })
             </div>
 
             {/* Table Rows */}
-            {filtered.map((p, ri) => {
-              const hot = hovered === p.id;
+            {patients.map((p, ri) => {
+              const pId = p.patientId || p.id;
+              const hot = hovered === pId;
+              const formattedDate = p.createdOn || (p.createdAt ? new Date(p.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—");
               return (
                 <div
-                  key={p.id}
-                  onClick={() => onOpenPatient(p.id)}
-                  onMouseEnter={() => setHovered(p.id)}
+                  key={pId || ri}
+                  onClick={() => onOpenPatient(pId)}
+                  onMouseEnter={() => setHovered(pId)}
                   onMouseLeave={() => setHovered(null)}
                   style={{
                     display: "grid",
                     gridTemplateColumns: "2.2fr 1.4fr 1.6fr 1fr 36px",
                     padding: "16px 24px",
-                    borderBottom: ri < filtered.length - 1 ? `1px solid ${C.border}` : "none",
+                    borderBottom: ri < patients.length - 1 ? `1px solid ${C.border}` : "none",
                     alignItems: "center",
                     cursor: "pointer",
                     background: hot ? C.white : "transparent",
@@ -226,21 +250,21 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout })
                         transition: "all 0.14s ease",
                       }}
                     >
-                      {p.name[0]}
+                      {p.name ? p.name[0] : "P"}
                     </div>
                     <div>
                       <div style={{ fontSize: 15, fontWeight: 700, color: C.charcoal, letterSpacing: "-0.01em" }}>{p.name}</div>
-                      <div style={{ fontSize: 11, color: C.muted, fontWeight: 600, letterSpacing: "0.04em", marginTop: 2 }}>{p.id}</div>
+                      <div style={{ fontSize: 11, color: C.muted, fontWeight: 600, letterSpacing: "0.04em", marginTop: 2 }}>{pId}</div>
                     </div>
                   </div>
 
                   <div>
                     <div style={{ fontSize: 13, color: C.charcoal, fontWeight: 500 }}>{p.phone}</div>
-                    <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{p.email}</div>
+                    <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{p.email || "—"}</div>
                   </div>
 
                   <div>
-                    {p.disease?.split(",").map((d) => (
+                    {p.disease ? p.disease.split(",").map((d) => (
                       <span
                         key={d}
                         style={{
@@ -258,10 +282,10 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout })
                       >
                         {d.trim()}
                       </span>
-                    ))}
+                    )) : <span style={{ fontSize: 12, color: C.muted }}>—</span>}
                   </div>
 
-                  <div style={{ fontSize: 12, color: C.muted, fontWeight: 500 }}>{p.createdOn}</div>
+                  <div style={{ fontSize: 12, color: C.muted, fontWeight: 500 }}>{formattedDate}</div>
 
                   <div style={{ opacity: hot ? 1 : 0, transition: "opacity 0.14s", display: "flex", justifyContent: "center" }}>
                     <svg width="14" height="14" fill="none" stroke={C.muted} strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24">
@@ -272,10 +296,35 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout })
               );
             })}
 
-            {filtered.length === 0 && (
+            {patients.length === 0 && (
               <div style={{ padding: "64px 24px", textAlign: "center" }}>
-                <div style={{ fontFamily: SERIF, fontSize: 40, color: C.border, marginBottom: 12, fontStyle: "italic" }}>∅</div>
-                <div style={{ fontSize: 14, color: C.muted }}>No patients match your search</div>
+                <div style={{ fontFamily: SERIF, fontSize: 32, color: C.gold, marginBottom: 8, fontStyle: "italic" }}>✦</div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: C.charcoal }}>
+                  {search ? "No patients match your search" : "No patients registered yet"}
+                </div>
+                <p style={{ fontSize: 13, color: C.muted, margin: "8px auto 20px", maxWidth: 360, lineHeight: 1.6 }}>
+                  {search
+                    ? "Try searching with a different name, phone number, or patient ID."
+                    : "Your clinic workspace is clean and ready. Click below to register your first patient."}
+                </p>
+                {!search && (
+                  <button
+                    onClick={onAddPatient}
+                    style={{
+                      padding: "11px 24px",
+                      borderRadius: 10,
+                      fontSize: 13,
+                      fontWeight: 800,
+                      background: C.wine,
+                      color: C.white,
+                      border: "none",
+                      cursor: "pointer",
+                      boxShadow: "0 3px 12px rgba(122,21,40,0.22)",
+                    }}
+                  >
+                    + Register First Patient
+                  </button>
+                )}
               </div>
             )}
           </div>

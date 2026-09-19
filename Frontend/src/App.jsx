@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { authService } from "./services/api";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import DashboardPage from "./pages/DashboardPage";
@@ -7,9 +8,33 @@ import PatientProfilePage from "./pages/PatientProfilePage";
 import NewVisitPage from "./pages/NewVisitPage";
 
 export default function App() {
-  const [screen, setScreen] = useState("dashboard"); // default to dashboard for immediate clinical view
-  const [patientId, setPatientId] = useState("P-1001");
-  const [visitPatientId, setVisitPatientId] = useState("P-1001");
+  const [screen, setScreen] = useState("login");
+  const [doctor, setDoctor] = useState(null);
+  const [patientId, setPatientId] = useState("");
+  const [visitPatientId, setVisitPatientId] = useState("");
+
+  useEffect(() => {
+    const savedDoc = localStorage.getItem("clinic_doctor");
+    const token = localStorage.getItem("clinic_token");
+    if (savedDoc && token) {
+      try {
+        const parsed = JSON.parse(savedDoc);
+        setDoctor(parsed);
+        setScreen("dashboard");
+      } catch (_) {}
+    }
+  }, []);
+
+  function handleLoginSuccess(doc) {
+    setDoctor(doc);
+    setScreen("dashboard");
+  }
+
+  function handleLogout() {
+    authService.logout();
+    setDoctor(null);
+    setScreen("login");
+  }
 
   function openPatient(id) {
     setPatientId(id);
@@ -25,28 +50,30 @@ export default function App() {
     <>
       {screen === "login" && (
         <LoginPage
-          onSuccess={() => setScreen("dashboard")}
+          onSuccess={handleLoginSuccess}
           onSignup={() => setScreen("signup")}
         />
       )}
 
       {screen === "signup" && (
         <SignupPage
-          onSuccess={() => setScreen("dashboard")}
+          onSuccess={handleLoginSuccess}
           onLogin={() => setScreen("login")}
         />
       )}
 
       {screen === "dashboard" && (
         <DashboardPage
+          doctor={doctor}
           onOpenPatient={openPatient}
           onAddPatient={() => setScreen("add-patient")}
-          onLogout={() => setScreen("login")}
+          onLogout={handleLogout}
         />
       )}
 
       {screen === "add-patient" && (
         <AddPatientPage
+          doctor={doctor}
           onBack={() => setScreen("dashboard")}
           onSaved={(id) => openPatient(id)}
         />
@@ -54,15 +81,17 @@ export default function App() {
 
       {screen === "patient-profile" && (
         <PatientProfilePage
+          doctor={doctor}
           patientId={patientId}
           onBack={() => setScreen("dashboard")}
           onNewVisit={() => openNewVisit(patientId)}
-          onLogout={() => setScreen("login")}
+          onLogout={handleLogout}
         />
       )}
 
       {screen === "new-visit" && (
         <NewVisitPage
+          doctor={doctor}
           patientId={visitPatientId}
           onBack={() => openPatient(visitPatientId)}
           onSaved={() => openPatient(visitPatientId)}

@@ -12,8 +12,14 @@ const C = {
 };
 const SERIF = "'Fraunces', Georgia, serif";
 
-export default function AppHeader({ onLogout }) {
+export default function AppHeader({ onLogout, doctor }) {
   const [menuOpen, setMenuOpen] = useState(false);
+
+  const doctorName = doctor?.name || "Doctor";
+  const doctorSpecialty = doctor?.specialty || "General Physician";
+  // Extract initial for avatar
+  const cleanName = doctorName.replace(/^(Dr\.|Doctor)\s*/i, "").trim();
+  const avatarLetter = cleanName ? cleanName.charAt(0).toUpperCase() : "D";
 
   return (
     <header
@@ -105,13 +111,13 @@ export default function AppHeader({ onLogout }) {
                 fontStyle: "italic",
               }}
             >
-              A
+              {avatarLetter}
             </div>
             <div style={{ lineHeight: 1.2, textAlign: "left" }}>
               <div style={{ fontSize: 12.5, fontWeight: 700, color: C.charcoal, letterSpacing: "-0.01em" }}>
-                Dr. Ahmed
+                {doctorName}
               </div>
-              <div style={{ fontSize: 10, color: C.muted }}>General Physician</div>
+              <div style={{ fontSize: 10, color: C.muted }}>{doctorSpecialty}</div>
             </div>
             <svg
               width="10"
@@ -142,8 +148,8 @@ export default function AppHeader({ onLogout }) {
             >
               <div style={{ padding: "10px 0" }}>
                 <div style={{ padding: "8px 16px", borderBottom: `1px solid ${C.border}`, marginBottom: 4 }}>
-                  <div style={{ fontSize: 12, fontWeight: 700, color: C.charcoal }}>Dr. Ahmed</div>
-                  <div style={{ fontSize: 10.5, color: C.muted }}>General Physician</div>
+                  <div style={{ fontSize: 12, fontWeight: 700, color: C.charcoal }}>{doctorName}</div>
+                  <div style={{ fontSize: 10.5, color: C.muted }}>{doctorSpecialty}</div>
                 </div>
                 <button
                   onClick={() => {

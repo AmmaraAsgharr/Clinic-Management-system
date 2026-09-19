@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { patients, getPatientHistory, addVisit } from "../data/store";
+import { useState, useEffect } from "react";
+import { visitService, patientService } from "../services/api";
 import AppHeader from "../components/common/AppHeader";
 
 const C = {
@@ -64,9 +64,10 @@ function Field({ label, value, onChange, type = "text", placeholder = "", requir
   );
 }
 
-export default function NewVisitPage({ patientId, onBack, onSaved }) {
-  const patient = patients.find((p) => p.id === patientId);
-  const history = getPatientHistory(patientId);
+export default function NewVisitPage({ doctor, patientId, onBack, onSaved }) {
+  const [patient, setPatient] = useState(null);
+  const [history, setHistory] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const [visitDate, setVisitDate] = useState(new Date().toISOString().split("T")[0]);
   const [symptoms, setSymptoms] = useState("");
@@ -80,6 +81,24 @@ export default function NewVisitPage({ patientId, onBack, onSaved }) {
   const [err, setErr] = useState("");
   const [saving, setSaving] = useState(false);
 
+  useEffect(() => {
+    async function loadPatient() {
+      try {
+        setLoading(true);
+        const res = await patientService.getPatientById(patientId);
+        if (res.success && res.patient) {
+          setPatient(res.patient);
+          setHistory(res.history || null);
+        }
+      } catch (e) {
+        console.error("Failed to load patient for new visit:", e);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadPatient();
+  }, [patientId]);
+
   function updateRx(idx, field, val) {
     setRxRows((rows) => rows.map((r, i) => (i === idx ? { ...r, [field]: val } : r)));
   }
@@ -92,7 +111,7 @@ export default function NewVisitPage({ patientId, onBack, onSaved }) {
     setRxRows((r) => r.filter((_, i) => i !== idx));
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setErr("");
     if (!symptoms.trim() && !diagnosis.trim()) {
@@ -101,27 +120,42 @@ export default function NewVisitPage({ patientId, onBack, onSaved }) {
     }
     const validRx = rxRows.filter((r) => r.medicineName.trim());
     setSaving(true);
-    setTimeout(() => {
-      addVisit(
+    try {
+      const res = await visitService.createVisit({
         patientId,
-        {
-          visitDate: new Date(visitDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
-          symptoms: symptoms.trim(),
-          doctorNotes: `Diagnosis: ${diagnosis.trim()}\n\n${notes.trim()}`,
-          followUpDate: null,
-        },
-        validRx
-      );
+        visitDate: new Date(visitDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
+        symptoms: symptoms.trim(),
+        diagnosis: diagnosis.trim(),
+        doctorNotes: notes.trim(),
+        followUpDate: "",
+        prescriptions: validRx,
+      });
+
+      if (res.success && res.visit) {
+        onSaved();
+      } else {
+        setErr(res.message || "Failed to create visit record.");
+      }
+    } catch (error) {
+      setErr(error.message || "Failed to connect to backend server.");
+    } finally {
       setSaving(false);
-      onSaved();
-    }, 600);
+    }
+  }
+
+  if (loading && !patient) {
+    return (
+      <div style={{ padding: 40, fontFamily: "'Plus Jakarta Sans',sans-serif", color: C.muted }}>
+        Loading patient…
+      </div>
+    );
   }
 
   if (!patient) return null;
 
   return (
     <div style={{ minHeight: "100vh", background: C.ivory, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
-      <AppHeader onLogout={onBack} />
+      <AppHeader doctor={doctor} onLogout={onBack} />
 
       {/* Wine Header */}
       <div style={{ background: C.wine, position: "relative", overflow: "hidden" }}>

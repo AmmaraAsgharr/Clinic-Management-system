@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { authService } from "../services/api";
 
 const C = {
   wine: "#7A1528",
@@ -20,7 +21,7 @@ export default function LoginPage({ onSuccess, onSignup }) {
   const [err, setErr] = useState("");
   const [loading, setLoading] = useState(false);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setErr("");
     if (!email || !password) {
@@ -28,10 +29,21 @@ export default function LoginPage({ onSuccess, onSignup }) {
       return;
     }
     setLoading(true);
-    setTimeout(() => {
+    try {
+      const res = await authService.login({
+        email: email.trim(),
+        password,
+      });
+      if (res.success && res.doctor) {
+        onSuccess(res.doctor);
+      } else {
+        setErr(res.message || "Login failed. Please check your credentials.");
+      }
+    } catch (error) {
+      setErr(error.message || "Failed to connect to server. Please check your backend.");
+    } finally {
       setLoading(false);
-      onSuccess();
-    }, 600);
+    }
   }
 
   return (

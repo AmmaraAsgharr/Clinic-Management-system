@@ -1,10 +1,5 @@
-import { useState } from "react";
-import {
-  patients,
-  getPatientHistory,
-  getPatientVisits,
-  getPatientFiles,
-} from "../data/store";
+import { useState, useEffect } from "react";
+import { patientService } from "../services/api";
 import AppHeader from "../components/common/AppHeader";
 import VisitRow from "../components/patient-detail/VisitRow";
 import UploadDialog from "../components/patient-detail/UploadDialog";
@@ -77,20 +72,51 @@ const FileIcons = {
   ),
 };
 
-export default function PatientProfilePage({ patientId, onBack, onNewVisit, onLogout }) {
-  const patient = patients.find((p) => p.id === patientId);
-  const history = getPatientHistory(patientId);
-  const visits = getPatientVisits(patientId);
+export default function PatientProfilePage({ doctor, patientId, onBack, onNewVisit, onLogout }) {
+  const [patient, setPatient] = useState(null);
+  const [history, setHistory] = useState(null);
+  const [visits, setVisits] = useState([]);
+  const [liveFiles, setLiveFiles] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const [expanded, setExpanded] = useState(0);
   const [fileHover, setFileHover] = useState(null);
   const [showUpload, setShowUpload] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
   const [viewFile, setViewFile] = useState(null);
-  const [, setRefreshKey] = useState(0);
 
-  const triggerRefresh = () => setRefreshKey((k) => k + 1);
-  const liveFiles = getPatientFiles(patientId);
+  async function fetchDossier() {
+    try {
+      setLoading(true);
+      const res = await patientService.getPatientById(patientId);
+      if (res.success && res.patient) {
+        setPatient(res.patient);
+        setHistory(res.history || null);
+        setVisits(res.visits || []);
+        setLiveFiles(res.files || []);
+      }
+    } catch (err) {
+      console.error("Failed to load patient profile:", err);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchDossier();
+  }, [patientId]);
+
+  const triggerRefresh = () => {
+    fetchDossier();
+  };
+
+  if (loading && !patient) {
+    return (
+      <div style={{ padding: 40, fontFamily: "'Plus Jakarta Sans',sans-serif", color: C.muted }}>
+        Loading patient dossier…
+      </div>
+    );
+  }
 
   if (!patient) {
     return (
@@ -116,13 +142,14 @@ export default function PatientProfilePage({ patientId, onBack, onNewVisit, onLo
         <EditProfileDialog
           patientId={patientId}
           patient={patient}
+          history={history}
           onClose={() => setShowEdit(false)}
           onUpdated={triggerRefresh}
         />
       )}
       {viewFile && <ViewFileDialog file={viewFile} onClose={() => setViewFile(null)} />}
 
-      <AppHeader onLogout={onLogout} />
+      <AppHeader doctor={doctor} onLogout={onLogout} />
 
       {/* Dossier Header */}
       <div style={{ background: C.wine, position: "relative", overflow: "hidden" }}>
@@ -250,7 +277,7 @@ export default function PatientProfilePage({ patientId, onBack, onNewVisit, onLo
                   { label: "Phone", value: patient.phone },
                   { label: "Email", value: patient.email || "—" },
                   { label: "Address", value: patient.address || "—" },
-                  { label: "Since", value: patient.createdOn },
+                  { label: "Since", value: patient.createdOn || (patient.createdAt ? new Date(patient.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—") },
                 ].map((item, i) => (
                   <div key={i} style={{ padding: "20px 22px", borderRight: i < 4 ? `1px solid ${C.border}` : "none", position: "relative" }}>
                     {i === 0 && (
@@ -293,7 +320,7 @@ export default function PatientProfilePage({ patientId, onBack, onNewVisit, onLo
                     <div style={{ display: "flex", flexDirection: "column" }}>
                       {visits.map((v, i) => (
                         <VisitRow
-                          key={v.id}
+                          key={v._id || v.visitId || v.id || i}
                           visit={v}
                           index={i}
                           isOpen={expanded === i}

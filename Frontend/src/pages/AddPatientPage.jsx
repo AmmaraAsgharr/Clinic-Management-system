@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { addPatient, addMedicalHistory } from "../data/store";
+import { patientService } from "../services/api";
 import AppHeader from "../components/common/AppHeader";
 
 const C = {
@@ -64,7 +64,7 @@ function Field({ label, value, onChange, type = "text", placeholder = "", requir
   );
 }
 
-export default function AddPatientPage({ onBack, onSaved }) {
+export default function AddPatientPage({ doctor, onBack, onSaved }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -77,7 +77,7 @@ export default function AddPatientPage({ onBack, onSaved }) {
   const [err, setErr] = useState("");
   const [saving, setSaving] = useState(false);
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
     setErr("");
     if (!name.trim() || !phone.trim()) {
@@ -85,29 +85,35 @@ export default function AddPatientPage({ onBack, onSaved }) {
       return;
     }
     setSaving(true);
-    setTimeout(() => {
-      const p = addPatient({
+    try {
+      const res = await patientService.createPatient({
         name: name.trim(),
         email: email.trim(),
         phone: phone.trim(),
         disease: disease.trim(),
         address: address.trim(),
-      });
-      addMedicalHistory({
-        patientId: p.id,
-        previousDescription: prevDesc.trim(),
-        allergies: allergies.split(",").map((s) => s.trim()).filter(Boolean),
         diseases: diseases.split(",").map((s) => s.trim()).filter(Boolean),
+        allergies: allergies.split(",").map((s) => s.trim()).filter(Boolean),
+        previousDescription: prevDesc.trim(),
         diagnosedDate: diagDate,
       });
+
+      if (res.success && res.patient) {
+        const createdId = res.patient.patientId || res.patient._id;
+        onSaved(createdId);
+      } else {
+        setErr(res.message || "Failed to create patient record.");
+      }
+    } catch (error) {
+      setErr(error.message || "Failed to connect to backend server.");
+    } finally {
       setSaving(false);
-      onSaved(p.id);
-    }, 600);
+    }
   }
 
   return (
     <div style={{ minHeight: "100vh", background: C.ivory, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
-      <AppHeader onLogout={onBack} />
+      <AppHeader doctor={doctor} onLogout={onBack} />
 
       {/* Wine Sub-header */}
       <div style={{ background: C.wine, position: "relative", overflow: "hidden" }}>

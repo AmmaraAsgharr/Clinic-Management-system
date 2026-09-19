@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { medicalHistories, getPatientHistory } from "../../data/store";
+import { patientService } from "../../services/api";
 
 const C = {
   wine: "#7A1528",
@@ -9,61 +9,56 @@ const C = {
   charcoal: "#242124",
   muted: "#7A756F",
   border: "#E8E5E2",
+  error: "#DC2626",
 };
 const SERIF = "'Fraunces', Georgia, serif";
 
-export default function EditProfileDialog({ patientId, patient, onClose, onUpdated }) {
-  const existingHistory = getPatientHistory(patientId);
-
+export default function EditProfileDialog({ patientId, patient, history, onClose, onUpdated }) {
   const [tab, setTab] = useState("info");
   const [saving, setSaving] = useState(false);
   const [done, setDone] = useState(false);
+  const [err, setErr] = useState("");
 
-  const [name, setName] = useState(patient.name || "");
-  const [email, setEmail] = useState(patient.email || "");
-  const [phone, setPhone] = useState(patient.phone || "");
-  const [disease, setDisease] = useState(patient.disease || "");
-  const [address, setAddress] = useState(patient.address || "");
+  const [name, setName] = useState(patient?.name || "");
+  const [email, setEmail] = useState(patient?.email || "");
+  const [phone, setPhone] = useState(patient?.phone || "");
+  const [disease, setDisease] = useState(patient?.disease || "");
+  const [address, setAddress] = useState(patient?.address || "");
 
-  const [diseases, setDiseases] = useState(existingHistory?.diseases?.join(", ") ?? "");
-  const [allergies, setAllergies] = useState(existingHistory?.allergies?.join(", ") ?? "");
-  const [prevDesc, setPrevDesc] = useState(existingHistory?.previousDescription ?? "");
-  const [diagDate, setDiagDate] = useState(existingHistory?.diagnosedDate ?? "");
+  const [diseases, setDiseases] = useState(history?.diseases?.join(", ") ?? "");
+  const [allergies, setAllergies] = useState(history?.allergies?.join(", ") ?? "");
+  const [prevDesc, setPrevDesc] = useState(history?.previousDescription ?? "");
+  const [diagDate, setDiagDate] = useState(history?.diagnosedDate ?? "");
 
-  function handleSave(e) {
+  async function handleSave(e) {
     e.preventDefault();
     setSaving(true);
-    setTimeout(() => {
-      patient.name = name.trim() || patient.name;
-      patient.email = email.trim();
-      patient.phone = phone.trim();
-      patient.disease = disease.trim();
-      patient.address = address.trim();
-
-      const idx = medicalHistories.findIndex((h) => h.patientId === patientId);
-      const updatedHistory = {
+    setErr("");
+    try {
+      const res = await patientService.updatePatient(patientId, {
+        name: name.trim() || patient.name,
+        email: email.trim(),
+        phone: phone.trim(),
+        disease: disease.trim(),
+        address: address.trim(),
         diseases: diseases.split(",").map((s) => s.trim()).filter(Boolean),
         allergies: allergies.split(",").map((s) => s.trim()).filter(Boolean),
         previousDescription: prevDesc.trim(),
         diagnosedDate: diagDate,
-      };
+      });
 
-      if (idx !== -1) {
-        Object.assign(medicalHistories[idx], updatedHistory);
+      if (res.success) {
+        setDone(true);
+        onUpdated?.();
+        setTimeout(onClose, 800);
       } else {
-        medicalHistories.push({
-          id: `MH-${Date.now()}`,
-          patientId,
-          createdOn: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
-          ...updatedHistory,
-        });
+        setErr(res.message || "Failed to update profile.");
       }
-
+    } catch (error) {
+      setErr(error.message || "Failed to connect to server.");
+    } finally {
       setSaving(false);
-      setDone(true);
-      onUpdated?.();
-      setTimeout(onClose, 800);
-    }, 600);
+    }
   }
 
   const iStyle = {
@@ -190,6 +185,11 @@ export default function EditProfileDialog({ patientId, patient, onClose, onUpdat
         ) : (
           <form onSubmit={handleSave} style={{ display: "flex", flexDirection: "column", flex: 1, overflow: "hidden" }}>
             <div style={{ padding: "24px 28px", overflowY: "auto", flex: 1, display: "flex", flexDirection: "column", gap: 16 }}>
+              {err && (
+                <div style={{ background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 10, padding: "10px 14px", fontSize: 13, color: C.error }}>
+                  {err}
+                </div>
+              )}
               {tab === "info" && (
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 14 }}>
                   <div>

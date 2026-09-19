@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { medicalFiles } from "../../data/store";
+import { fileService } from "../../services/api";
 
 const C = {
   wine: "#7A1528",
@@ -10,6 +10,7 @@ const C = {
   charcoal: "#242124",
   muted: "#7A756F",
   border: "#E8E5E2",
+  error: "#DC2626",
 };
 const SERIF = "'Fraunces', Georgia, serif";
 
@@ -20,6 +21,7 @@ export default function UploadDialog({ patientId, onClose, onUploaded }) {
   const [fileType, setFileType] = useState("lab");
   const [uploading, setUploading] = useState(false);
   const [done, setDone] = useState(false);
+  const [err, setErr] = useState("");
 
   const FILE_TYPES = [
     { value: "lab", label: "Lab Report" },
@@ -35,24 +37,31 @@ export default function UploadDialog({ patientId, onClose, onUploaded }) {
     if (f) setSelected(f);
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (!selected) return;
     setUploading(true);
-    setTimeout(() => {
-      medicalFiles.push({
-        id: `F-${Date.now()}`,
+    setErr("");
+    try {
+      const res = await fileService.createFileRecord({
         patientId,
         filename: selected.name.replace(/\.[^.]+$/, ""),
         storageKey: `uploads/${patientId}/${selected.name}`,
         fileType,
-        date: new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }),
         uploadedBy: "Dr. Ahmed",
       });
+
+      if (res.success) {
+        setDone(true);
+        onUploaded?.();
+        setTimeout(onClose, 900);
+      } else {
+        setErr(res.message || "Failed to record file upload.");
+      }
+    } catch (error) {
+      setErr(error.message || "Failed to connect to backend server.");
+    } finally {
       setUploading(false);
-      setDone(true);
-      onUploaded?.();
-      setTimeout(onClose, 900);
-    }, 600);
+    }
   }
 
   return (
@@ -109,6 +118,11 @@ export default function UploadDialog({ patientId, onClose, onUploaded }) {
             </div>
           ) : (
             <>
+              {err && (
+                <div style={{ background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 10, padding: "10px 14px", fontSize: 13, color: C.error, marginBottom: 16 }}>
+                  {err}
+                </div>
+              )}
               <div
                 onDragOver={(e) => {
                   e.preventDefault();
