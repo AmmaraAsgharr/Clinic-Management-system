@@ -120,22 +120,5 @@ Doc-App/
 
 ---
 
-## 🌐 Deployment Guide
 
-### Database
-- **MongoDB Atlas:** Free M0 cluster with Network Access allowed from anywhere (`0.0.0.0/0`).
-
-### Backend (Render / Railway)
-- Root Directory: `Backend`
-- Build Command: `npm install`
-- Start Command: `npm start`
-- Environment Variables:
-  - `MONGO_URI`
-  - `JWT_SECRET`
-  - `NODE_ENV=production`
-
-### Frontend (Vercel)
-- Root Directory: `Frontend`
-- Framework Preset: `Vite`
-- Build Command: `npm run build`
 - Output Directory: `dist`
