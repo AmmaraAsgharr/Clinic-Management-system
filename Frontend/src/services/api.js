@@ -1,4 +1,6 @@
-const API_BASE_URL = '/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL
+  ? `${import.meta.env.VITE_API_URL.replace(/\/+$/, '')}/api`
+  : '/api';
 
 /**
  * Base fetch wrapper with JWT Authorization header support and error parsing
@@ -145,8 +147,8 @@ export const fileService = {
 
   getPresignedUrl: (fileId) => apiRequest(`/files/${fileId}/presigned-url`),
 
-  // Direct GridFS view URL (no extra API call needed)
-  getViewUrl: (fileId) => `/api/files/${fileId}/view`,
+  // Direct GridFS view URL (uses configured backend URL in production)
+  getViewUrl: (fileId) => `${API_BASE_URL}/files/${fileId}/view`,
 
   deleteFile: (fileId) =>
     apiRequest(`/files/${fileId}`, {
