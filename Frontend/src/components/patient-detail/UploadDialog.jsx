@@ -42,20 +42,20 @@ export default function UploadDialog({ patientId, onClose, onUploaded }) {
     setUploading(true);
     setErr("");
     try {
-      const res = await fileService.createFileRecord({
-        patientId,
-        filename: selected.name.replace(/\.[^.]+$/, ""),
-        storageKey: `uploads/${patientId}/${selected.name}`,
-        fileType,
-        uploadedBy: "Dr. Ahmed",
-      });
+      const formData = new FormData();
+      formData.append("file", selected);
+      formData.append("patientId", patientId);
+      formData.append("fileType", fileType);
+      formData.append("uploadedBy", "Dr. Ahmed");
+
+      const res = await fileService.uploadFile(formData);
 
       if (res.success) {
         setDone(true);
         onUploaded?.();
         setTimeout(onClose, 900);
       } else {
-        setErr(res.message || "Failed to record file upload.");
+        setErr(res.message || "Failed to upload file.");
       }
     } catch (error) {
       setErr(error.message || "Failed to connect to backend server.");

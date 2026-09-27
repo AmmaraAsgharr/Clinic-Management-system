@@ -111,6 +111,32 @@ export const visitService = {
 export const fileService = {
   getPatientFiles: (patientId) => apiRequest(`/files/patient/${patientId}`),
 
+  uploadFile: async (formData) => {
+    const token = localStorage.getItem('clinic_token');
+    const headers = {
+      ...(token && { Authorization: `Bearer ${token}` }),
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/files/upload`, {
+        method: 'POST',
+        headers,
+        body: formData, // browser automatically sets multipart/form-data with boundary
+      });
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data.message || `Upload failed with status ${response.status}`);
+      }
+
+      return data;
+    } catch (error) {
+      console.error('API error at /files/upload:', error.message);
+      throw error;
+    }
+  },
+
   createFileRecord: (fileData) =>
     apiRequest('/files', {
       method: 'POST',
@@ -118,5 +144,14 @@ export const fileService = {
     }),
 
   getPresignedUrl: (fileId) => apiRequest(`/files/${fileId}/presigned-url`),
+
+  // Direct GridFS view URL (no extra API call needed)
+  getViewUrl: (fileId) => `/api/files/${fileId}/view`,
+
+  deleteFile: (fileId) =>
+    apiRequest(`/files/${fileId}`, {
+      method: 'DELETE',
+    }),
 };
+
 

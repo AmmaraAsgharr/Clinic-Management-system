@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { patientService } from "../services/api";
+import { patientService, fileService } from "../services/api";
 import AppHeader from "../components/common/AppHeader";
 import VisitRow from "../components/patient-detail/VisitRow";
 import UploadDialog from "../components/patient-detail/UploadDialog";
@@ -109,6 +109,18 @@ export default function PatientProfilePage({ doctor, patientId, onBack, onNewVis
   const triggerRefresh = () => {
     fetchDossier();
   };
+
+  async function handleQuickDownload(file) {
+    try {
+      const fileId = file.fileId || file.id;
+      const res = await fileService.getPresignedUrl(fileId);
+      if (res.success && res.viewUrl) {
+        window.open(res.viewUrl, "_blank", "noopener,noreferrer");
+      }
+    } catch (e) {
+      console.error("Download failed:", e);
+    }
+  }
 
   if (loading && !patient) {
     return (
@@ -460,7 +472,8 @@ export default function PatientProfilePage({ doctor, patientId, onBack, onNewVis
                             View
                           </button>
                           <button
-                            onClick={() => alert(`Downloading ${f.filename}...`)}
+                            onClick={() => handleQuickDownload(f)}
+                            title="Download / View document"
                             style={{
                               width: 30,
                               height: 28,

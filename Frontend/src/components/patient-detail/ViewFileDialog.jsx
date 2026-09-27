@@ -1,3 +1,5 @@
+import { fileService } from "../../services/api";
+
 const C = {
   wine: "#7A1528",
   gold: "#B79A63",
@@ -17,6 +19,22 @@ export default function ViewFileDialog({ file, onClose }) {
     imaging: "Imaging / X-Ray",
     other: "Document",
   };
+
+  const fileId = file.fileId || file.id;
+
+  // Direct GridFS URL — no extra API call needed
+  const viewUrl = fileService.getViewUrl(fileId);
+
+  function handleOpenFile() {
+    window.open(viewUrl, "_blank", "noopener,noreferrer");
+  }
+
+  function handleDownload() {
+    const link = document.createElement("a");
+    link.href = viewUrl;
+    link.download = file.filename;
+    link.click();
+  }
 
   return (
     <div
@@ -75,7 +93,7 @@ export default function ViewFileDialog({ file, onClose }) {
           </div>
           <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <button
-              onClick={() => alert(`Downloading ${file.filename}... (Cloud S3 pre-signed URL download will connect here)`)}
+              onClick={handleDownload}
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -122,9 +140,9 @@ export default function ViewFileDialog({ file, onClose }) {
         <div style={{ display: "flex", gap: 0, borderBottom: `1px solid ${C.border}`, flexShrink: 0, background: C.ivoryLight }}>
           {[
             ["Date", file.date],
-            ["Uploaded by", file.uploadedBy || "Dr. Ahmed"],
+            ["Uploaded by", file.uploadedBy || "Doctor"],
             ["Type", typeLabel[file.fileType] || file.fileType],
-            ["File ID", file.id],
+            ["File ID", fileId],
           ].map(([k, v], i) => (
             <div key={i} style={{ padding: "12px 20px", borderRight: i < 3 ? `1px solid ${C.border}` : "none", flex: 1 }}>
               <div style={{ fontSize: 9, letterSpacing: "0.12em", fontWeight: 800, color: C.muted, textTransform: "uppercase", marginBottom: 4 }}>
@@ -156,13 +174,13 @@ export default function ViewFileDialog({ file, onClose }) {
               {file.filename}
             </div>
             <p style={{ fontSize: 13, color: C.muted, margin: "0 auto 20px", maxWidth: 360, lineHeight: 1.6 }}>
-              Storage reference: <code style={{ background: C.champagne, padding: "2px 6px", borderRadius: 4, fontSize: 12 }}>{file.storageKey || `uploads/${file.id}`}</code>
+              Stored securely in <strong>MongoDB Atlas</strong>
             </p>
             <div style={{ display: "inline-flex", gap: 10 }}>
               <button
-                onClick={() => alert(`Pre-signed cloud viewing link will be requested from backend API.`)}
+                onClick={handleOpenFile}
                 style={{
-                  padding: "9px 20px",
+                  padding: "9px 24px",
                   borderRadius: 8,
                   fontSize: 13,
                   fontWeight: 700,
@@ -170,9 +188,25 @@ export default function ViewFileDialog({ file, onClose }) {
                   color: C.white,
                   border: "none",
                   cursor: "pointer",
+                  boxShadow: `0 3px 12px rgba(122,21,40,0.25)`,
                 }}
               >
-                Open Full File
+                Open File ↗
+              </button>
+              <button
+                onClick={handleDownload}
+                style={{
+                  padding: "9px 24px",
+                  borderRadius: 8,
+                  fontSize: 13,
+                  fontWeight: 700,
+                  background: "transparent",
+                  color: C.wine,
+                  border: `1.5px solid ${C.wine}`,
+                  cursor: "pointer",
+                }}
+              >
+                Download
               </button>
             </div>
           </div>
