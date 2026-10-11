@@ -35,17 +35,7 @@ export default function AppHeader({ onLogout, doctor }) {
     >
       <div style={{ height: 2.5, background: `linear-gradient(90deg,${C.wine},${C.gold},transparent)` }} />
 
-      <div
-        style={{
-          maxWidth: 1360,
-          margin: "0 auto",
-          padding: "0 44px",
-          display: "flex",
-          alignItems: "center",
-          height: 60,
-          justifyContent: "space-between",
-        }}
-      >
+      <div className="app-header-inner">
         {/* Brand */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div

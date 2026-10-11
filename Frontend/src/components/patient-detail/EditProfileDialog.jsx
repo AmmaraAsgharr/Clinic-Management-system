@@ -13,6 +13,12 @@ const C = {
 };
 const SERIF = "'Fraunces', Georgia, serif";
 
+function isValidPhoneNumber(phone) {
+  if (!phone) return false;
+  const cleaned = String(phone).replace(/[\s\-()]/g, "");
+  return /^(\+?[0-9]{10,15}|03[0-9]{9})$/.test(cleaned);
+}
+
 export default function EditProfileDialog({ patientId, patient, history, onClose, onUpdated }) {
   const [tab, setTab] = useState("info");
   const [saving, setSaving] = useState(false);
@@ -32,8 +38,20 @@ export default function EditProfileDialog({ patientId, patient, history, onClose
 
   async function handleSave(e) {
     e.preventDefault();
-    setSaving(true);
     setErr("");
+    if (!name.trim()) {
+      setErr("Patient name is required.");
+      return;
+    }
+    if (!phone.trim()) {
+      setErr("Patient phone number is required.");
+      return;
+    }
+    if (!isValidPhoneNumber(phone.trim())) {
+      setErr("Please enter a valid phone number (e.g. 03001234567, 0300-1234567, or +923001234567).");
+      return;
+    }
+    setSaving(true);
     try {
       const res = await patientService.updatePatient(patientId, {
         name: name.trim() || patient.name,
@@ -74,32 +92,9 @@ export default function EditProfileDialog({ patientId, patient, history, onClose
   const taStyle = { ...iStyle, resize: "vertical", lineHeight: 1.65 };
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 500,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px",
-      }}
-    >
+    <div className="dialog-overlay">
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(36,33,36,0.45)", backdropFilter: "blur(4px)" }} />
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          maxWidth: 560,
-          maxHeight: "90vh",
-          background: C.white,
-          borderRadius: 18,
-          boxShadow: "0 24px 72px rgba(36,33,36,0.2)",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <div className="dialog-modal-box" style={{ maxWidth: 560 }}>
         <div
           style={{
             background: C.wine,

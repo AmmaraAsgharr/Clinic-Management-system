@@ -87,27 +87,15 @@ export default function SignupPage({ onSuccess, onLogin }) {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: C.ivory, display: "flex", fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+    <div className="auth-wrapper" style={{ minHeight: "100vh", background: C.ivory, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
       {/* Left panel */}
-      <div
-        style={{
-          width: "42%",
-          background: C.wine,
-          position: "relative",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          padding: "60px 56px",
-          flexShrink: 0,
-        }}
-      >
+      <div className="auth-side-panel">
         <div style={{ position: "absolute", top: -60, right: -60, width: 260, height: 260, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.06)" }} />
         <div style={{ position: "absolute", bottom: -50, left: 40, width: 160, height: 160, borderRadius: "50%", background: "rgba(183,154,99,0.1)" }} />
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,rgba(183,154,99,0.5),transparent)` }} />
 
         <div style={{ position: "relative" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 64 }}>
+          <div className="auth-logo" style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 64 }}>
             <div
               style={{
                 width: 34,
@@ -133,11 +121,11 @@ export default function SignupPage({ onSuccess, onLogin }) {
           <h2 style={{ fontFamily: SERIF, fontSize: 40, fontWeight: 400, color: C.white, fontStyle: "italic", letterSpacing: "-0.025em", lineHeight: 1.1, margin: "0 0 16px" }}>
             Set up your practice.
           </h2>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", lineHeight: 1.7, maxWidth: 320 }}>
+          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", lineHeight: 1.7, maxWidth: 320, margin: 0 }}>
             Create your account in seconds. Your clinical workspace will be ready immediately — no setup required.
           </p>
 
-          <div style={{ marginTop: 56, padding: "24px", background: "rgba(255,255,255,0.06)", borderRadius: 14, border: "1px solid rgba(255,255,255,0.1)" }}>
+          <div className="auth-features-list" style={{ marginTop: 48, padding: "20px 24px", background: "rgba(255,255,255,0.06)", borderRadius: 14, border: "1px solid rgba(255,255,255,0.1)" }}>
             <div style={{ fontSize: 10.5, letterSpacing: "0.12em", fontWeight: 800, color: C.gold, textTransform: "uppercase", marginBottom: 12 }}>
               What you get
             </div>
@@ -152,7 +140,7 @@ export default function SignupPage({ onSuccess, onLogin }) {
       </div>
 
       {/* Right panel */}
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px", overflowY: "auto" }}>
+      <div className="auth-form-panel">
         <div style={{ width: "100%", maxWidth: 440 }}>
           <h1 style={{ fontSize: 26, fontWeight: 800, color: C.charcoal, letterSpacing: "-0.025em", margin: "0 0 6px" }}>
             Create your account

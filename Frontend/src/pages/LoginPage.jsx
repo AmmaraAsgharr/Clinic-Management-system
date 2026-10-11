@@ -47,28 +47,16 @@ export default function LoginPage({ onSuccess, onSignup }) {
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: C.ivory, display: "flex", fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+    <div className="auth-wrapper" style={{ minHeight: "100vh", background: C.ivory, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
       {/* Left panel — wine */}
-      <div
-        style={{
-          width: "42%",
-          background: C.wine,
-          position: "relative",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          padding: "60px 56px",
-          flexShrink: 0,
-        }}
-      >
+      <div className="auth-side-panel">
         <div style={{ position: "absolute", top: -60, right: -60, width: 260, height: 260, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.06)" }} />
         <div style={{ position: "absolute", bottom: -50, left: 40, width: 160, height: 160, borderRadius: "50%", background: "rgba(183,154,99,0.1)" }} />
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg,transparent,rgba(183,154,99,0.5),transparent)` }} />
 
         <div style={{ position: "relative" }}>
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 64 }}>
+          <div className="auth-logo" style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 64 }}>
             <div
               style={{
                 width: 34,
@@ -94,11 +82,11 @@ export default function LoginPage({ onSuccess, onSignup }) {
           <h2 style={{ fontFamily: SERIF, fontSize: 40, fontWeight: 400, color: C.white, fontStyle: "italic", letterSpacing: "-0.025em", lineHeight: 1.1, margin: "0 0 16px" }}>
             Welcome back, Doctor.
           </h2>
-          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", lineHeight: 1.7, maxWidth: 320 }}>
+          <p style={{ fontSize: 14, color: "rgba(255,255,255,0.45)", lineHeight: 1.7, maxWidth: 320, margin: 0 }}>
             Your clinical workspace is ready. Log in to access your patient records, visits, and prescriptions.
           </p>
 
-          <div style={{ marginTop: 56, display: "flex", flexDirection: "column", gap: 14 }}>
+          <div className="auth-features-list">
             {["Patient records in one place", "Visit history with prescriptions", "Follow-up date tracking", "Secure medical file storage"].map((item) => (
               <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <div style={{ width: 5, height: 5, borderRadius: "50%", background: C.gold, flexShrink: 0 }} />
@@ -110,7 +98,7 @@ export default function LoginPage({ onSuccess, onSignup }) {
       </div>
 
       {/* Right panel — form */}
-      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", padding: "40px" }}>
+      <div className="auth-form-panel">
         <div style={{ width: "100%", maxWidth: 420 }}>
           <h1 style={{ fontSize: 26, fontWeight: 800, color: C.charcoal, letterSpacing: "-0.025em", margin: "0 0 6px" }}>
             Log in to your account
@@ -156,11 +144,6 @@ export default function LoginPage({ onSuccess, onSignup }) {
               </div>
             ))}
 
-            <div style={{ display: "flex", justifyContent: "flex-end" }}>
-              <button type="button" style={{ fontSize: 12.5, color: C.wine, fontWeight: 700, background: "none", border: "none", cursor: "pointer" }}>
-                Forgot password?
-              </button>
-            </div>
 
             <button
               type="submit"

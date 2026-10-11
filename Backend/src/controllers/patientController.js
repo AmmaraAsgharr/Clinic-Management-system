@@ -90,6 +90,12 @@ export async function getPatientById(req, res, next) {
   }
 }
 
+export function isValidPhone(phone) {
+  if (!phone) return false;
+  const cleaned = String(phone).replace(/[\s\-()]/g, '');
+  return /^(\+?[0-9]{10,15}|03[0-9]{9})$/.test(cleaned);
+}
+
 // @desc    Create new patient
 // @route   POST /api/patients
 export async function createPatient(req, res, next) {
@@ -114,6 +120,13 @@ export async function createPatient(req, res, next) {
       return res.status(400).json({
         success: false,
         message: 'Patient name and phone number are required.',
+      });
+    }
+
+    if (!isValidPhone(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid phone number (e.g. 03001234567 or +923001234567).',
       });
     }
 
@@ -190,6 +203,13 @@ export async function updatePatient(req, res, next) {
       previousDescription,
       diagnosedDate,
     } = req.body;
+
+    if (phone && !isValidPhone(phone)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Please provide a valid phone number (e.g. 03001234567 or +923001234567).',
+      });
+    }
 
     const patient = await Patient.findOneAndUpdate(
       { patientId },

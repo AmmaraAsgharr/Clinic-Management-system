@@ -142,7 +142,7 @@ export default function PatientProfilePage({ doctor, patientId, onBack, onNewVis
   }
 
   return (
-    <div style={{ minHeight: "100vh", background: C.ivory, fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: C.ivory, fontFamily: "'Plus Jakarta Sans',sans-serif", width: "100%", maxWidth: "100vw", overflowX: "hidden" }}>
       {showUpload && (
         <UploadDialog
           patientId={patientId}
@@ -173,7 +173,7 @@ export default function PatientProfilePage({ doctor, patientId, onBack, onNewVis
           <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 1, background: "linear-gradient(90deg,transparent,rgba(183,154,99,0.2) 50%,transparent)" }} />
         </div>
 
-        <div style={{ maxWidth: 1360, margin: "0 auto", padding: "0 44px", position: "relative" }}>
+        <div className="wine-subhead-inner" style={{ position: "relative" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 12, height: 52, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
             <button
               onClick={onBack}
@@ -202,12 +202,12 @@ export default function PatientProfilePage({ doctor, patientId, onBack, onNewVis
             </span>
           </div>
 
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", padding: "32px 0 36px" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 22 }}>
+          <div className="profile-subhead-row">
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               <div
                 style={{
-                  width: 64,
-                  height: 64,
+                  width: 56,
+                  height: 56,
                   borderRadius: 16,
                   flexShrink: 0,
                   border: "1.5px solid rgba(255,255,255,0.2)",
@@ -217,23 +217,23 @@ export default function PatientProfilePage({ doctor, patientId, onBack, onNewVis
                   justifyContent: "center",
                 }}
               >
-                <span style={{ fontFamily: SERIF, fontSize: 30, color: C.white, fontStyle: "italic", lineHeight: 1 }}>
-                  {patient.name[0]}
+                <span style={{ fontFamily: SERIF, fontSize: 26, color: C.white, fontStyle: "italic", lineHeight: 1 }}>
+                  {patient.name ? patient.name[0] : "P"}
                 </span>
               </div>
               <div>
-                <h1 style={{ fontFamily: SERIF, fontSize: 34, fontWeight: 400, color: C.white, fontStyle: "italic", letterSpacing: "-0.025em", lineHeight: 1.05, margin: 0 }}>
+                <h1 style={{ fontFamily: SERIF, fontSize: "clamp(24px, 4vw, 34px)", fontWeight: 400, color: C.white, fontStyle: "italic", letterSpacing: "-0.025em", lineHeight: 1.1, margin: 0 }}>
                   {patient.name}
                 </h1>
-                <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 8 }}>
-                  <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{patient.phone}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 6, flexWrap: "wrap" }}>
+                  <span style={{ fontSize: 12, color: "rgba(255,255,255,0.5)" }}>{patient.phone}</span>
                   <div style={{ width: 1, height: 12, background: "rgba(255,255,255,0.2)" }} />
                   <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>Dr. Ahmed · General Physician</span>
                 </div>
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: 8 }}>
+            <div className="actions-wrap" style={{ display: "flex", gap: 8 }}>
               <button
                 onClick={() => setShowEdit(true)}
                 style={{
@@ -243,7 +243,7 @@ export default function PatientProfilePage({ doctor, patientId, onBack, onNewVis
                   fontWeight: 700,
                   border: "1px solid rgba(255,255,255,0.15)",
                   background: "transparent",
-                  color: "rgba(255,255,255,0.65)",
+                  color: "rgba(255,255,255,0.8)",
                   cursor: "pointer",
                 }}
               >
@@ -277,13 +277,13 @@ export default function PatientProfilePage({ doctor, patientId, onBack, onNewVis
       <div style={{ height: 2.5, background: `linear-gradient(90deg,${C.wine},${C.gold},rgba(183,154,99,0.08))` }} />
 
       {/* Main Content */}
-      <div style={{ maxWidth: 1360, margin: "0 auto", padding: "44px 44px 100px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 352px", gap: 28, alignItems: "start" }}>
+      <div className="page-container">
+        <div className="profile-layout-grid">
           {/* Left Column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             {/* Personal Information */}
             <Card>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(5,1fr)" }}>
+              <div className="profile-info-strip">
                 {[
                   { label: "Name", value: patient.name },
                   { label: "Phone", value: patient.phone },
@@ -291,11 +291,11 @@ export default function PatientProfilePage({ doctor, patientId, onBack, onNewVis
                   { label: "Address", value: patient.address || "—" },
                   { label: "Since", value: patient.createdOn || (patient.createdAt ? new Date(patient.createdAt).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" }) : "—") },
                 ].map((item, i) => (
-                  <div key={i} style={{ padding: "20px 22px", borderRight: i < 4 ? `1px solid ${C.border}` : "none", position: "relative" }}>
+                  <div key={i} className="info-strip-cell">
                     {i === 0 && (
                       <div style={{ position: "absolute", top: 0, left: 0, width: 3, height: "100%", background: `linear-gradient(to bottom,${C.gold},transparent)` }} />
                     )}
-                    <div style={{ fontSize: 9, letterSpacing: "0.14em", fontWeight: 800, color: C.muted, textTransform: "uppercase", marginBottom: 8 }}>
+                    <div style={{ fontSize: 9.5, letterSpacing: "0.14em", fontWeight: 800, color: C.muted, textTransform: "uppercase", marginBottom: 6 }}>
                       {item.label}
                     </div>
                     <div style={{ fontSize: 13.5, fontWeight: 700, color: C.charcoal, letterSpacing: "-0.01em", wordBreak: "break-word" }}>
@@ -308,13 +308,13 @@ export default function PatientProfilePage({ doctor, patientId, onBack, onNewVis
 
             {/* Visit History Timeline */}
             <Card>
-              <div style={{ padding: "18px 26px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+              <div style={{ padding: "16px clamp(14px, 3vw, 26px)", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 <SectionLabel accent={C.wine}>Visit History</SectionLabel>
                 <span style={{ fontSize: 11.5, color: C.muted, marginBottom: 18 }}>
                   {visits.length} visit{visits.length !== 1 ? "s" : ""} on record
                 </span>
               </div>
-              <div style={{ padding: "28px 26px" }}>
+              <div style={{ padding: "clamp(16px, 3vw, 26px)" }}>
                 {visits.length === 0 ? (
                   <div style={{ textAlign: "center", padding: "40px 0" }}>
                     <div style={{ fontFamily: SERIF, fontSize: 36, color: C.border, marginBottom: 10, fontStyle: "italic" }}>—</div>

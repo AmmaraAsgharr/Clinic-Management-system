@@ -1,12 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&display=swap');
 
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after {
+  box-sizing: border-box;
+}
 
-html { scroll-behavior: smooth; }
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
 
 body {
-  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
   background: #F7F4EF;
   color: #242124;
   -webkit-font-smoothing: antialiased;
@@ -17,23 +28,422 @@ body {
 
 ::selection { background: rgba(122,21,40,0.12); color: #242124; }
 
-::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(201,197,192,0.6); border-radius: 2px; }
+::-webkit-scrollbar-thumb { background: rgba(201,197,192,0.6); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #7A1528; }
 
-button, textarea, input { font-family: inherit; }
-textarea:focus, input:focus { outline: none; }
+button, textarea, input, select {
+  font-family: inherit;
+  font-size: 100%;
+  box-sizing: border-box;
+}
+textarea:focus, input:focus, select:focus { outline: none; }
 button { cursor: pointer; }
 
-/* Patient row hover */
-.patient-row { transition: background 0.14s ease, box-shadow 0.14s ease; }
-.patient-row:hover { background: #FFFFFF !important; box-shadow: 0 2px 16px rgba(36,33,36,0.07) !important; }
-.patient-row:hover .row-arrow { opacity: 1 !important; }
-.patient-row:hover .row-avatar { background: #EDE3D5 !important; color: #7A1528 !important; }
+/* ── Fluid Page Containers ── */
+.app-header-inner {
+  max-width: 1360px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 clamp(14px, 3.5vw, 44px);
+  display: flex;
+  align-items: center;
+  height: 60px;
+  justify-content: space-between;
+}
 
-/* File row hover */
-.file-row { transition: background 0.14s ease; }
-.file-row:hover { background: #F7F4EF !important; }
-.file-row:hover .file-icon-box { background: #EDE3D5 !important; color: #7A1528 !important; }
-.file-row:hover .file-view-btn { background: #7A1528 !important; color: #fff !important; border-color: #7A1528 !important; }
+.page-container {
+  max-width: 1360px;
+  width: 100%;
+  margin: 0 auto;
+  padding: clamp(16px, 3.5vw, 44px) clamp(12px, 3.5vw, 44px) 80px;
+  box-sizing: border-box;
+}
+
+.wine-subhead-inner {
+  max-width: 1360px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 clamp(12px, 3.5vw, 44px);
+  box-sizing: border-box;
+}
+
+/* ── Auth Screen (Login & Signup) ── */
+.auth-wrapper {
+  min-height: 100vh;
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden;
+  background: #F7F4EF;
+  display: flex;
+  flex-direction: row;
+}
+
+.auth-side-panel {
+  width: 42%;
+  min-width: 320px;
+  background: #7A1528;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: clamp(32px, 5vw, 60px) clamp(24px, 4vw, 56px);
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.auth-form-panel {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(24px, 5vw, 48px) clamp(16px, 4vw, 40px);
+  box-sizing: border-box;
+}
+
+.auth-features-list {
+  margin-top: 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+@media (max-width: 860px) {
+  .auth-wrapper {
+    flex-direction: column;
+  }
+  .auth-side-panel {
+    width: 100% !important;
+    min-width: 0 !important;
+    padding: 24px 18px !important;
+  }
+  .auth-side-panel .auth-logo {
+    margin-bottom: 16px !important;
+  }
+  .auth-side-panel h2 {
+    font-size: 24px !important;
+    margin-bottom: 6px !important;
+  }
+  .auth-side-panel p {
+    font-size: 13px !important;
+    max-width: 100% !important;
+  }
+  .auth-features-list {
+    display: none;
+  }
+  .auth-form-panel {
+    padding: 24px 16px 48px !important;
+    width: 100%;
+  }
+}
+
+/* ── Dashboard Layout ── */
+.dash-hero-section {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.dash-stats-grid {
+  display: flex;
+  gap: 14px;
+  flex: 1;
+  justify-content: flex-end;
+  min-width: 280px;
+}
+
+@media (max-width: 768px) {
+  .dash-hero-section {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+  }
+  .dash-hero-section h1 {
+    font-size: 26px !important;
+  }
+  .dash-stats-grid {
+    justify-content: stretch;
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .dash-stats-grid {
+    flex-direction: column;
+  }
+}
+
+/* ── Dashboard Search Bar & Action Button ── */
+.dash-search-bar-wrap {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 640px) {
+  .dash-search-bar-wrap {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .dash-search-bar-wrap button {
+    width: 100%;
+    justify-content: center;
+    padding: 13px 20px !important;
+  }
+}
+
+/* ── Dashboard Patient Table / Responsive Cards ── */
+.dash-table-header {
+  display: grid;
+  grid-template-columns: 2.2fr 1.4fr 1.6fr 1fr 36px;
+  padding: 11px 24px;
+  background: #FAF8F4;
+  border-bottom: 1px solid #E8E5E2;
+}
+
+.dash-table-row {
+  display: grid;
+  grid-template-columns: 2.2fr 1.4fr 1.6fr 1fr 36px;
+  padding: 16px 24px;
+  align-items: center;
+  cursor: pointer;
+  transition: all 0.14s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.mobile-card-meta {
+  display: none;
+}
+
+.mobile-row-arrow {
+  display: none;
+}
+
+@media (max-width: 820px) {
+  .dash-table-header {
+    display: none;
+  }
+  .desktop-only-arrow {
+    display: none !important;
+  }
+  .mobile-row-arrow {
+    display: flex !important;
+  }
+  .mobile-card-meta {
+    display: flex !important;
+  }
+  .dash-table-row {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 16px 14px !important;
+    gap: 12px;
+    border-bottom: 1px solid #E8E5E2 !important;
+    background: #FFFFFF !important;
+    margin-bottom: 8px;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(36,33,36,0.04);
+  }
+  .dash-table-row .row-main-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  .desktop-cell {
+    display: none !important;
+  }
+}
+
+/* ── Patient Profile Header & Grid ── */
+.profile-subhead-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 24px 0 28px;
+  gap: 16px;
+  flex-wrap: wrap;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-layout-grid {
+  display: grid;
+  grid-template-columns: 1fr 352px;
+  gap: 24px;
+  align-items: start;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-info-strip {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.info-strip-cell {
+  padding: 18px 20px;
+  border-right: 1px solid #E8E5E2;
+  position: relative;
+  min-width: 0;
+  box-sizing: border-box;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+.info-strip-cell:last-child {
+  border-right: none;
+}
+
+@media (max-width: 980px) {
+  .profile-layout-grid {
+    grid-template-columns: 1fr !important;
+  }
+  .profile-info-strip {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  .info-strip-cell {
+    border-right: 1px solid #E8E5E2 !important;
+    border-bottom: 1px solid #E8E5E2 !important;
+    padding: 14px 14px !important;
+  }
+  .info-strip-cell:nth-child(2n) {
+    border-right: none !important;
+  }
+  .info-strip-cell:last-child {
+    border-bottom: none !important;
+  }
+}
+
+@media (max-width: 600px) {
+  .profile-subhead-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .profile-subhead-row .actions-wrap {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  .profile-subhead-row .actions-wrap button {
+    flex: 1;
+    justify-content: center;
+    text-align: center;
+  }
+  .profile-info-strip {
+    grid-template-columns: 1fr !important;
+  }
+  .info-strip-cell {
+    border-right: none !important;
+    border-bottom: 1px solid #E8E5E2 !important;
+    padding: 12px 14px !important;
+  }
+  .info-strip-cell:last-child {
+    border-bottom: none !important;
+  }
+}
+
+/* ── Form Grids (Add Patient & New Visit) ── */
+.form-grid-2col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 680px) {
+  .form-grid-2col {
+    grid-template-columns: 1fr !important;
+  }
+  .form-grid-2col > div {
+    grid-column: span 1 !important;
+  }
+}
+
+/* ── New Visit Prescriptions Table on Mobile ── */
+.rx-table-head {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr 36px;
+  gap: 12px;
+}
+
+.rx-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 2fr 36px;
+  gap: 12px;
+  align-items: start;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+  .rx-table-head {
+    display: none;
+  }
+  .rx-table-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 14px;
+    border: 1px solid #E8E5E2;
+    border-radius: 12px;
+    background: #FAF8F4;
+    position: relative;
+    width: 100%;
+  }
+  .rx-table-row .rx-delete-btn {
+    align-self: flex-end;
+    width: 100% !important;
+  }
+}
+
+/* ── VisitRow Prescription Cards ── */
+.visit-rx-grid {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr 1fr 1.8fr;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+@media (max-width: 680px) {
+  .visit-rx-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+/* ── Modal Dialogs ── */
+.dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(10px, 3vw, 24px);
+  box-sizing: border-box;
+}
+
+.dialog-modal-box {
+  position: relative;
+  width: 100%;
+  max-height: 90vh;
+  background: #FFFFFF;
+  border-radius: 18px;
+  box-shadow: 0 24px 72px rgba(36,33,36,0.22);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+}

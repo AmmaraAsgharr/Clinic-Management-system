@@ -54,13 +54,13 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout, d
     <div style={{ minHeight: "100vh", background: C.ivory, display: "flex", flexDirection: "column", fontFamily: "'Plus Jakarta Sans',sans-serif" }}>
       <AppHeader onLogout={onLogout} doctor={doctor} />
 
-      <main style={{ flex: 1, maxWidth: 1360, width: "100%", margin: "0 auto", padding: "52px 44px 100px" }}>
+      <main className="page-container" style={{ flex: 1 }}>
         {/* ── Top Hero: Greeting (Left) + Stats Cards (Right) ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 32, marginBottom: 36, flexWrap: "wrap" }}>
+        <div className="dash-hero-section">
           {/* Greeting Left */}
           <div style={{ maxWidth: 460 }}>
             <p style={{ fontSize: 11, letterSpacing: "0.16em", fontWeight: 700, color: C.gold, textTransform: "uppercase", marginBottom: 8 }}>
-              Saturday · 12 September 2026
+              {new Date().toLocaleDateString("en-GB", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
             </p>
             <h1 style={{ fontFamily: SERIF, fontSize: 36, fontWeight: 400, color: C.charcoal, margin: 0, lineHeight: 1.15, letterSpacing: "-0.02em", fontStyle: "italic" }}>
               Good morning, <span style={{ color: C.wine }}>{doctor?.name || "Doctor"}.</span>
@@ -71,7 +71,7 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout, d
           </div>
 
           {/* Stat Cards Right (Opposite free space) */}
-          <div style={{ display: "flex", gap: 16, flex: 1, justifyContent: "flex-end", minWidth: 320, maxWidth: 640 }}>
+          <div className="dash-stats-grid">
             {/* Total Patients Card */}
             <div
               style={{
@@ -136,7 +136,7 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout, d
         <div style={{ marginBottom: 32 }}><GoldRule /></div>
 
         {/* ── Search & Filter ── */}
-        <div style={{ display: "flex", gap: 10, marginBottom: 36 }}>
+        <div className="dash-search-bar-wrap">
           <div
             style={{
               flex: 1,
@@ -201,7 +201,7 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout, d
 
           <div style={{ background: C.white, borderRadius: 16, border: `1px solid ${C.border}`, boxShadow: "0 2px 12px rgba(36,33,36,0.05)", overflow: "hidden" }}>
             {/* Table Header */}
-            <div style={{ display: "grid", gridTemplateColumns: "2.2fr 1.4fr 1.6fr 1fr 36px", padding: "11px 24px", background: C.ivoryLight, borderBottom: `1px solid ${C.border}` }}>
+            <div className="dash-table-header">
               {["Patient", "Contact", "Condition", "Since", ""].map((h, i) => (
                 <span key={i} style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: "0.13em", color: C.muted, textTransform: "uppercase" }}>
                   {h}
@@ -217,59 +217,83 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout, d
               return (
                 <div
                   key={pId || ri}
+                  className="dash-table-row patient-row"
                   onClick={() => onOpenPatient(pId)}
                   onMouseEnter={() => setHovered(pId)}
                   onMouseLeave={() => setHovered(null)}
                   style={{
-                    display: "grid",
-                    gridTemplateColumns: "2.2fr 1.4fr 1.6fr 1fr 36px",
-                    padding: "16px 24px",
                     borderBottom: ri < patients.length - 1 ? `1px solid ${C.border}` : "none",
-                    alignItems: "center",
-                    cursor: "pointer",
                     background: hot ? C.white : "transparent",
                     boxShadow: hot ? "0 2px 16px rgba(36,33,36,0.07)" : "none",
-                    transition: "all 0.14s ease",
                   }}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: 13 }}>
-                    <div
-                      style={{
-                        width: 40,
-                        height: 40,
-                        borderRadius: 11,
-                        flexShrink: 0,
-                        background: hot ? C.champagne : "#EEEAE5",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontFamily: SERIF,
-                        fontSize: 17,
-                        color: hot ? C.wine : C.muted,
-                        fontStyle: "italic",
-                        transition: "all 0.14s ease",
-                      }}
-                    >
-                      {p.name ? p.name[0] : "P"}
+                  {/* Row Header (Avatar + Name + ID + Mobile Chevron) */}
+                  <div className="row-main-info" style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+                      <div
+                        className="row-avatar"
+                        style={{
+                          width: 44,
+                          height: 44,
+                          borderRadius: 12,
+                          flexShrink: 0,
+                          background: hot ? C.champagne : "#EEEAE5",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontFamily: SERIF,
+                          fontSize: 18,
+                          color: hot ? C.wine : C.muted,
+                          fontStyle: "italic",
+                          transition: "all 0.14s ease",
+                        }}
+                      >
+                        {p.name ? p.name[0] : "P"}
+                      </div>
+                      <div>
+                        <div style={{ fontSize: 16, fontWeight: 700, color: C.charcoal, letterSpacing: "-0.01em" }}>
+                          {p.name}
+                        </div>
+                        <div
+                          style={{
+                            display: "inline-block",
+                            fontSize: 12,
+                            color: C.wine,
+                            background: "rgba(122,21,40,0.08)",
+                            padding: "2px 8px",
+                            borderRadius: 6,
+                            fontWeight: 700,
+                            marginTop: 3,
+                            letterSpacing: "0.02em",
+                          }}
+                        >
+                          {pId}
+                        </div>
+                      </div>
                     </div>
-                    <div>
-                      <div style={{ fontSize: 15, fontWeight: 700, color: C.charcoal, letterSpacing: "-0.01em" }}>{p.name}</div>
-                      <div style={{ fontSize: 11, color: C.muted, fontWeight: 600, letterSpacing: "0.04em", marginTop: 2 }}>{pId}</div>
+
+                    {/* Mobile Chevron Arrow */}
+                    <div className="mobile-row-arrow" style={{ alignItems: "center", color: C.muted }}>
+                      <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" viewBox="0 0 24 24">
+                        <path d="M9 18l6-6-6-6" />
+                      </svg>
                     </div>
                   </div>
 
-                  <div>
-                    <div style={{ fontSize: 13, color: C.charcoal, fontWeight: 500 }}>{p.phone}</div>
-                    <div style={{ fontSize: 11, color: C.muted, marginTop: 2 }}>{p.email || "—"}</div>
+                  {/* Desktop Contact Column */}
+                  <div className="desktop-cell row-contact">
+                    <div style={{ fontSize: 13.5, color: C.charcoal, fontWeight: 600 }}>{p.phone}</div>
+                    {p.email && <div style={{ fontSize: 11.5, color: C.muted, marginTop: 2 }}>{p.email}</div>}
                   </div>
 
-                  <div>
+                  {/* Desktop Condition Column */}
+                  <div className="desktop-cell row-condition">
                     {p.disease ? p.disease.split(",").map((d) => (
                       <span
                         key={d}
                         style={{
                           display: "inline-block",
-                          fontSize: 11,
+                          fontSize: 11.5,
                           color: C.muted,
                           border: `1px solid ${C.border}`,
                           padding: "2px 8px",
@@ -285,12 +309,75 @@ export default function DashboardPage({ onOpenPatient, onAddPatient, onLogout, d
                     )) : <span style={{ fontSize: 12, color: C.muted }}>—</span>}
                   </div>
 
-                  <div style={{ fontSize: 12, color: C.muted, fontWeight: 500 }}>{formattedDate}</div>
+                  {/* Desktop Date Column */}
+                  <div className="desktop-cell row-date" style={{ fontSize: 12.5, color: C.muted, fontWeight: 500 }}>
+                    {formattedDate}
+                  </div>
 
-                  <div style={{ opacity: hot ? 1 : 0, transition: "opacity 0.14s", display: "flex", justifyContent: "center" }}>
+                  {/* Desktop Arrow */}
+                  <div className="desktop-only-arrow row-arrow" style={{ opacity: hot ? 1 : 0.4, transition: "opacity 0.14s", display: "flex", justifyContent: "center" }}>
                     <svg width="14" height="14" fill="none" stroke={C.muted} strokeWidth="2" strokeLinecap="round" viewBox="0 0 24 24">
                       <path d="M5 12h14M12 5l7 7-7 7" />
                     </svg>
+                  </div>
+
+                  {/* ── Mobile Rich Details Card Body ── */}
+                  <div
+                    className="mobile-card-meta"
+                    style={{
+                      flexDirection: "column",
+                      gap: 8,
+                      background: "#FAF8F4",
+                      padding: "12px 14px",
+                      borderRadius: 10,
+                      border: "1px solid #ECE8E1",
+                      marginTop: 4,
+                      width: "100%",
+                      boxSizing: "border-box",
+                    }}
+                  >
+                    {/* Phone & Date Row */}
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 8 }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 14, fontWeight: 700, color: C.charcoal }}>
+                        <span style={{ fontSize: 13, color: C.wine }}>📞</span>
+                        <span>{p.phone}</span>
+                      </div>
+                      <div style={{ fontSize: 12.5, color: C.muted, fontWeight: 600 }}>
+                        📅 {formattedDate}
+                      </div>
+                    </div>
+
+                    {/* Condition Badge */}
+                    {p.disease && (
+                      <div style={{ display: "flex", alignItems: "center", gap: 6, marginTop: 2, flexWrap: "wrap" }}>
+                        <span style={{ fontSize: 11, fontWeight: 800, color: C.muted, textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                          Condition:
+                        </span>
+                        {p.disease.split(",").map((d) => (
+                          <span
+                            key={d}
+                            style={{
+                              display: "inline-block",
+                              fontSize: 12,
+                              color: C.wine,
+                              background: "rgba(122,21,40,0.06)",
+                              border: "1px solid rgba(122,21,40,0.18)",
+                              padding: "2px 8px",
+                              borderRadius: 6,
+                              fontWeight: 600,
+                            }}
+                          >
+                            {d.trim()}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {p.email && (
+                      <div style={{ fontSize: 12, color: C.muted, marginTop: 1 }}>
+                        ✉ {p.email}
+                      </div>
+                    )}
                   </div>
                 </div>
               );

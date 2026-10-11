@@ -37,32 +37,9 @@ export default function ViewFileDialog({ file, onClose }) {
   }
 
   return (
-    <div
-      style={{
-        position: "fixed",
-        inset: 0,
-        zIndex: 500,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "24px",
-      }}
-    >
+    <div className="dialog-overlay">
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(36,33,36,0.5)", backdropFilter: "blur(4px)" }} />
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          maxWidth: 680,
-          maxHeight: "90vh",
-          background: C.white,
-          borderRadius: 18,
-          boxShadow: "0 28px 80px rgba(36,33,36,0.25)",
-          overflow: "hidden",
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <div className="dialog-modal-box" style={{ maxWidth: 680 }}>
         {/* Header */}
         <div
           style={{

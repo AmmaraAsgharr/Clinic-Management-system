@@ -64,6 +64,12 @@ function Field({ label, value, onChange, type = "text", placeholder = "", requir
   );
 }
 
+function isValidPhoneNumber(phone) {
+  if (!phone) return false;
+  const cleaned = String(phone).replace(/[\s\-()]/g, "");
+  return /^(\+?[0-9]{10,15}|03[0-9]{9})$/.test(cleaned);
+}
+
 export default function AddPatientPage({ doctor, onBack, onSaved }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -80,8 +86,16 @@ export default function AddPatientPage({ doctor, onBack, onSaved }) {
   async function handleSubmit(e) {
     e.preventDefault();
     setErr("");
-    if (!name.trim() || !phone.trim()) {
-      setErr("Patient name and phone are required.");
+    if (!name.trim()) {
+      setErr("Patient name is required.");
+      return;
+    }
+    if (!phone.trim()) {
+      setErr("Patient phone number is required.");
+      return;
+    }
+    if (!isValidPhoneNumber(phone.trim())) {
+      setErr("Please enter a valid phone number (e.g. 03001234567, 0300-1234567, or +923001234567).");
       return;
     }
     setSaving(true);
@@ -119,7 +133,7 @@ export default function AddPatientPage({ doctor, onBack, onSaved }) {
       <div style={{ background: C.wine, position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 1.5, background: `linear-gradient(90deg,transparent,rgba(183,154,99,0.5),transparent)` }} />
         <div style={{ position: "absolute", top: -40, right: -40, width: 180, height: 180, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.05)" }} />
-        <div style={{ maxWidth: 1360, margin: "0 auto", padding: "0 44px" }}>
+        <div className="wine-subhead-inner">
           <div style={{ display: "flex", alignItems: "center", gap: 12, height: 52, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
             <button
               onClick={onBack}
@@ -147,11 +161,11 @@ export default function AddPatientPage({ doctor, onBack, onSaved }) {
               Add New Patient
             </span>
           </div>
-          <div style={{ padding: "28px 0 32px" }}>
-            <h1 style={{ fontFamily: SERIF, fontSize: 32, fontWeight: 400, color: C.white, fontStyle: "italic", letterSpacing: "-0.025em", margin: 0 }}>
+          <div style={{ padding: "24px 0 28px" }}>
+            <h1 style={{ fontFamily: SERIF, fontSize: "clamp(24px, 4vw, 32px)", fontWeight: 400, color: C.white, fontStyle: "italic", letterSpacing: "-0.025em", margin: 0 }}>
               New Patient Registration
             </h1>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 6 }}>
+            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.4)", marginTop: 6, margin: "6px 0 0" }}>
               Fill in the patient's information and medical history to create their record.
             </p>
           </div>
@@ -160,23 +174,23 @@ export default function AddPatientPage({ doctor, onBack, onSaved }) {
       <div style={{ height: 2.5, background: `linear-gradient(90deg,${C.wine},${C.gold},rgba(183,154,99,0.1))` }} />
 
       {/* Form Container */}
-      <div style={{ maxWidth: 1360, margin: "0 auto", padding: "44px 44px 100px" }}>
+      <div className="page-container">
         {err && (
           <div style={{ background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 10, padding: "12px 18px", marginBottom: 28, fontSize: 13.5, color: C.error }}>
             {err}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+        <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           {/* Patient Info Card */}
           <div style={{ background: C.white, borderRadius: 14, border: `1px solid ${C.border}`, boxShadow: "0 1px 6px rgba(36,33,36,0.05)", overflow: "hidden" }}>
-            <div style={{ padding: "18px 28px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 3, height: 16, background: C.wine, borderRadius: 2 }} />
               <span style={{ fontSize: 10, letterSpacing: "0.16em", fontWeight: 800, color: C.muted, textTransform: "uppercase" }}>
                 Patient Information
               </span>
             </div>
-            <div style={{ padding: "28px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div className="form-grid-2col" style={{ padding: "clamp(16px, 3vw, 28px)" }}>
               <Field label="Full Name" value={name} onChange={setName} placeholder="Ahmed Khan" required />
               <Field label="Phone Number" value={phone} onChange={setPhone} placeholder="0300-1234567" required />
               <Field label="Email Address" value={email} onChange={setEmail} type="email" placeholder="patient@email.com" />
@@ -187,14 +201,14 @@ export default function AddPatientPage({ doctor, onBack, onSaved }) {
 
           {/* Medical History Card */}
           <div style={{ background: C.white, borderRadius: 14, border: `1px solid ${C.border}`, boxShadow: "0 1px 6px rgba(36,33,36,0.05)", overflow: "hidden" }}>
-            <div style={{ padding: "18px 28px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 3, height: 16, background: C.gold, borderRadius: 2 }} />
               <span style={{ fontSize: 10, letterSpacing: "0.16em", fontWeight: 800, color: C.muted, textTransform: "uppercase" }}>
                 Medical History
               </span>
               <span style={{ fontSize: 12, color: C.muted, marginLeft: 4 }}>(optional)</span>
             </div>
-            <div style={{ padding: "28px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div className="form-grid-2col" style={{ padding: "clamp(16px, 3vw, 28px)" }}>
               <Field label="Known Diseases / Diagnoses" value={diseases} onChange={setDiseases} placeholder="Diabetes Type II, Hypertension (comma separated)" />
               <Field label="Allergies" value={allergies} onChange={setAllergies} placeholder="Penicillin, Aspirin (comma separated)" />
               <Field label="Date of First Diagnosis" value={diagDate} onChange={setDiagDate} type="date" span={2} />
@@ -210,7 +224,7 @@ export default function AddPatientPage({ doctor, onBack, onSaved }) {
           </div>
 
           {/* Form Actions */}
-          <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
+          <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", flexWrap: "wrap" }}>
             <button
               type="button"
               onClick={onBack}

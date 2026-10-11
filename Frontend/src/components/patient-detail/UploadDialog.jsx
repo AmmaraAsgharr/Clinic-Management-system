@@ -65,19 +65,9 @@ export default function UploadDialog({ patientId, onClose, onUploaded }) {
   }
 
   return (
-    <div style={{ position: "fixed", inset: 0, zIndex: 500, display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div className="dialog-overlay">
       <div onClick={onClose} style={{ position: "absolute", inset: 0, background: "rgba(36,33,36,0.45)", backdropFilter: "blur(4px)" }} />
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          maxWidth: 480,
-          background: C.white,
-          borderRadius: 18,
-          boxShadow: "0 24px 72px rgba(36,33,36,0.2)",
-          overflow: "hidden",
-        }}
-      >
+      <div className="dialog-modal-box" style={{ maxWidth: 480 }}>
         <div style={{ background: C.wine, padding: "22px 28px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontSize: 10, letterSpacing: "0.16em", fontWeight: 800, color: "rgba(255,255,255,0.45)", textTransform: "uppercase", marginBottom: 4 }}>

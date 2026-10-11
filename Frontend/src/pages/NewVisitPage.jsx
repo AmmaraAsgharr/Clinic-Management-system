@@ -163,7 +163,7 @@ export default function NewVisitPage({ doctor, patientId, onBack, onSaved }) {
         <div style={{ position: "absolute", top: -40, right: -40, width: 200, height: 200, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.05)" }} />
         <div style={{ position: "absolute", bottom: -30, right: 80, width: 120, height: 120, borderRadius: "50%", background: "rgba(183,154,99,0.1)" }} />
 
-        <div style={{ maxWidth: 1360, margin: "0 auto", padding: "0 44px" }}>
+        <div className="wine-subhead-inner">
           <div style={{ display: "flex", alignItems: "center", gap: 12, height: 52, borderBottom: "1px solid rgba(255,255,255,0.08)" }}>
             <button
               onClick={onBack}
@@ -192,12 +192,12 @@ export default function NewVisitPage({ doctor, patientId, onBack, onSaved }) {
             </span>
           </div>
 
-          <div style={{ padding: "28px 0 34px", display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+          <div style={{ padding: "24px 0 28px", display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 16 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
               <div
                 style={{
-                  width: 56,
-                  height: 56,
+                  width: 52,
+                  height: 52,
                   borderRadius: 14,
                   background: "rgba(255,255,255,0.1)",
                   border: "1.5px solid rgba(255,255,255,0.18)",
@@ -205,19 +205,19 @@ export default function NewVisitPage({ doctor, patientId, onBack, onSaved }) {
                   alignItems: "center",
                   justifyContent: "center",
                   fontFamily: SERIF,
-                  fontSize: 26,
+                  fontSize: 24,
                   color: C.white,
                   fontStyle: "italic",
                   flexShrink: 0,
                 }}
               >
-                {patient.name[0]}
+                {patient.name ? patient.name[0] : "P"}
               </div>
               <div>
-                <h1 style={{ fontFamily: SERIF, fontSize: 30, fontWeight: 400, color: C.white, fontStyle: "italic", letterSpacing: "-0.025em", margin: 0, lineHeight: 1 }}>
+                <h1 style={{ fontFamily: SERIF, fontSize: "clamp(22px, 3.5vw, 30px)", fontWeight: 400, color: C.white, fontStyle: "italic", letterSpacing: "-0.025em", margin: 0, lineHeight: 1.1 }}>
                   New Visit — {patient.name}
                 </h1>
-                <div style={{ display: "flex", gap: 12, marginTop: 7, alignItems: "center" }}>
+                <div style={{ display: "flex", gap: 10, marginTop: 7, alignItems: "center", flexWrap: "wrap" }}>
                   <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", fontWeight: 600, letterSpacing: "0.04em" }}>{patient.id}</span>
                   <div style={{ width: 1, height: 12, background: "rgba(255,255,255,0.2)" }} />
                   <span style={{ fontSize: 12, color: "rgba(255,255,255,0.4)" }}>{patient.phone}</span>
@@ -238,7 +238,7 @@ export default function NewVisitPage({ doctor, patientId, onBack, onSaved }) {
       <div style={{ height: 2.5, background: `linear-gradient(90deg,${C.wine},${C.gold},rgba(183,154,99,0.1))` }} />
 
       {/* Form Container */}
-      <div style={{ maxWidth: 1360, margin: "0 auto", padding: "44px 44px 100px" }}>
+      <div className="page-container">
         {err && (
           <div style={{ background: "rgba(220,38,38,0.06)", border: "1px solid rgba(220,38,38,0.2)", borderRadius: 10, padding: "12px 18px", marginBottom: 28, fontSize: 13.5, color: C.error }}>
             {err}
@@ -248,13 +248,13 @@ export default function NewVisitPage({ doctor, patientId, onBack, onSaved }) {
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 24 }}>
           {/* Visit Details */}
           <div style={{ background: C.white, borderRadius: 14, border: `1px solid ${C.border}`, boxShadow: "0 1px 6px rgba(36,33,36,0.05)", overflow: "hidden" }}>
-            <div style={{ padding: "16px 28px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 10 }}>
+            <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 3, height: 15, background: C.wine, borderRadius: 2 }} />
               <span style={{ fontSize: 10, letterSpacing: "0.16em", fontWeight: 800, color: C.muted, textTransform: "uppercase" }}>
                 Visit Details
               </span>
             </div>
-            <div style={{ padding: "24px 28px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
+            <div className="form-grid-2col" style={{ padding: "clamp(16px, 3vw, 28px)" }}>
               <Field label="Visit Date" value={visitDate} onChange={setVisitDate} type="date" required span={2} />
               <Field label="Symptoms" value={symptoms} onChange={setSymptoms} type="textarea" placeholder="Describe patient-reported symptoms in detail…" span={2} />
               <Field label="Diagnosis" value={diagnosis} onChange={setDiagnosis} type="textarea" placeholder="Clinical diagnosis and key findings…" span={2} />
@@ -264,7 +264,7 @@ export default function NewVisitPage({ doctor, patientId, onBack, onSaved }) {
 
           {/* Prescriptions */}
           <div style={{ background: C.white, borderRadius: 14, border: `1px solid ${C.border}`, boxShadow: "0 1px 6px rgba(36,33,36,0.05)", overflow: "hidden" }}>
-            <div style={{ padding: "16px 28px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <div style={{ padding: "16px 20px", borderBottom: `1px solid ${C.border}`, display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 10 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <div style={{ width: 3, height: 15, background: C.gold, borderRadius: 2 }} />
                 <span style={{ fontSize: 10, letterSpacing: "0.16em", fontWeight: 800, color: C.muted, textTransform: "uppercase" }}>
@@ -294,8 +294,8 @@ export default function NewVisitPage({ doctor, patientId, onBack, onSaved }) {
               </button>
             </div>
 
-            <div style={{ padding: "20px 28px", display: "flex", flexDirection: "column", gap: 14 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 2fr 32px", gap: 12 }}>
+            <div style={{ padding: "clamp(16px, 3vw, 24px)", display: "flex", flexDirection: "column", gap: 14 }}>
+              <div className="rx-table-head">
                 {["Medicine Name", "Frequency", "Duration", "Instructions", ""].map((h, i) => (
                   <span key={i} style={{ fontSize: 9.5, fontWeight: 800, letterSpacing: "0.12em", color: C.muted, textTransform: "uppercase" }}>
                     {h}
@@ -304,48 +304,65 @@ export default function NewVisitPage({ doctor, patientId, onBack, onSaved }) {
               </div>
 
               {rxRows.map((rx, idx) => (
-                <div key={idx} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 2fr 32px", gap: 12, alignItems: "start" }}>
-                  <input
-                    value={rx.medicineName}
-                    onChange={(e) => updateRx(idx, "medicineName", e.target.value)}
-                    placeholder="e.g. Metformin 500mg"
-                    style={{ padding: "10px 12px", borderRadius: 9, fontSize: 13, border: `1.5px solid ${C.border}`, background: C.ivoryLight, color: C.charcoal, fontFamily: "'Plus Jakarta Sans',sans-serif" }}
-                  />
-                  <input
-                    value={rx.frequency}
-                    onChange={(e) => updateRx(idx, "frequency", e.target.value)}
-                    placeholder="Twice daily"
-                    style={{ padding: "10px 12px", borderRadius: 9, fontSize: 13, border: `1.5px solid ${C.border}`, background: C.ivoryLight, color: C.charcoal, fontFamily: "'Plus Jakarta Sans',sans-serif" }}
-                  />
-                  <input
-                    value={rx.duration}
-                    onChange={(e) => updateRx(idx, "duration", e.target.value)}
-                    placeholder="3 months"
-                    style={{ padding: "10px 12px", borderRadius: 9, fontSize: 13, border: `1.5px solid ${C.border}`, background: C.ivoryLight, color: C.charcoal, fontFamily: "'Plus Jakarta Sans',sans-serif" }}
-                  />
-                  <input
-                    value={rx.instructions}
-                    onChange={(e) => updateRx(idx, "instructions", e.target.value)}
-                    placeholder="Take with meals"
-                    style={{ padding: "10px 12px", borderRadius: 9, fontSize: 13, border: `1.5px solid ${C.border}`, background: C.ivoryLight, color: C.charcoal, fontFamily: "'Plus Jakarta Sans',sans-serif" }}
-                  />
+                <div key={idx} className="rx-table-row">
+                  <div>
+                    <label style={{ display: "block", fontSize: 10, fontWeight: 700, color: C.muted, textTransform: "uppercase", marginBottom: 4 }}>Medicine</label>
+                    <input
+                      value={rx.medicineName}
+                      onChange={(e) => updateRx(idx, "medicineName", e.target.value)}
+                      placeholder="e.g. Metformin 500mg"
+                      style={{ width: "100%", padding: "10px 12px", borderRadius: 9, fontSize: 13, border: `1.5px solid ${C.border}`, background: C.ivoryLight, color: C.charcoal, fontFamily: "'Plus Jakarta Sans',sans-serif" }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: 10, fontWeight: 700, color: C.muted, textTransform: "uppercase", marginBottom: 4 }}>Frequency</label>
+                    <input
+                      value={rx.frequency}
+                      onChange={(e) => updateRx(idx, "frequency", e.target.value)}
+                      placeholder="Twice daily"
+                      style={{ width: "100%", padding: "10px 12px", borderRadius: 9, fontSize: 13, border: `1.5px solid ${C.border}`, background: C.ivoryLight, color: C.charcoal, fontFamily: "'Plus Jakarta Sans',sans-serif" }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: 10, fontWeight: 700, color: C.muted, textTransform: "uppercase", marginBottom: 4 }}>Duration</label>
+                    <input
+                      value={rx.duration}
+                      onChange={(e) => updateRx(idx, "duration", e.target.value)}
+                      placeholder="3 months"
+                      style={{ width: "100%", padding: "10px 12px", borderRadius: 9, fontSize: 13, border: `1.5px solid ${C.border}`, background: C.ivoryLight, color: C.charcoal, fontFamily: "'Plus Jakarta Sans',sans-serif" }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: 10, fontWeight: 700, color: C.muted, textTransform: "uppercase", marginBottom: 4 }}>Instructions</label>
+                    <input
+                      value={rx.instructions}
+                      onChange={(e) => updateRx(idx, "instructions", e.target.value)}
+                      placeholder="Take with meals"
+                      style={{ width: "100%", padding: "10px 12px", borderRadius: 9, fontSize: 13, border: `1.5px solid ${C.border}`, background: C.ivoryLight, color: C.charcoal, fontFamily: "'Plus Jakarta Sans',sans-serif" }}
+                    />
+                  </div>
                   {rxRows.length > 1 ? (
                     <button
                       type="button"
+                      className="rx-delete-btn"
                       onClick={() => removeRxRow(idx)}
                       style={{
-                        width: 32,
-                        height: 36,
+                        height: 38,
                         borderRadius: 8,
                         border: `1px solid rgba(220,38,38,0.2)`,
                         background: "rgba(220,38,38,0.05)",
                         color: "#DC2626",
                         cursor: "pointer",
-                        fontSize: 16,
-                        lineHeight: 1,
+                        fontSize: 14,
+                        fontWeight: 600,
+                        padding: "0 12px",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: 4,
                       }}
                     >
-                      ×
+                      <span style={{ fontSize: 16 }}>×</span> Remove
                     </button>
                   ) : (
                     <div />
@@ -356,7 +373,7 @@ export default function NewVisitPage({ doctor, patientId, onBack, onSaved }) {
           </div>
 
           {/* Form Actions */}
-          <div style={{ display: "flex", gap: 12, justifyContent: "flex-end" }}>
+          <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", flexWrap: "wrap" }}>
             <button
               type="button"
               onClick={onBack}

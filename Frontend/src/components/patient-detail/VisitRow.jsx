@@ -11,7 +11,16 @@ const C = {
 
 export default function VisitRow({ visit, index, isOpen, onToggle }) {
   return (
-    <div style={{ paddingLeft: 32, paddingBottom: index === 0 ? 0 : 28, position: "relative" }}>
+    <div
+      style={{
+        paddingLeft: "clamp(20px, 4vw, 32px)",
+        paddingBottom: index === 0 ? 0 : 28,
+        position: "relative",
+        width: "100%",
+        maxWidth: "100%",
+        boxSizing: "border-box",
+      }}
+    >
       <div
         style={{
           position: "absolute",
@@ -137,10 +146,8 @@ export default function VisitRow({ visit, index, isOpen, onToggle }) {
                 {visit.prescriptions.map((rx, i) => (
                   <div
                     key={i}
+                    className="visit-rx-grid"
                     style={{
-                      display: "grid",
-                      gridTemplateColumns: "1.8fr 1fr 1fr 1.8fr",
-                      gap: 12,
                       padding: "10px 14px",
                       background: "rgba(255,255,255,0.7)",
                       borderRadius: 9,
